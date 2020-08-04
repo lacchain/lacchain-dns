@@ -7,7 +7,6 @@ contract DNSRegistry is OwnableUpgradeSafe {
 
 	struct DIDStruct {
 		string entity;
-		uint expires;
 		bool status;
 	}
 
@@ -19,8 +18,7 @@ contract DNSRegistry is OwnableUpgradeSafe {
 	address[] public addresses;
 
 	event DIDAdded(
-		address indexed did,
-		uint expires
+		address indexed did
 	);
 
 	event DIDRevoked(
@@ -32,27 +30,24 @@ contract DNSRegistry is OwnableUpgradeSafe {
 	);
 
 	event DIDEnabled(
-		address indexed did,
-		uint expires
+		address indexed did
 	);
 
-	function addDID(address did, uint validity, string calldata entity) onlyOwner external returns (bool) {
+	function addDID(address did, string calldata entity) onlyOwner external returns (bool) {
 		DIDStruct storage _did = dids[did];
-		require( validity > 0, "Validity must be greater than zero");
-		require( _did.expires == 0, "DID already exists");
+		require( !_did.entity, "DID already exists");
 		_did.entity = entity;
-		_did.expires = now + validity;
 		_did.status = true;
 
 		dids[did] = _did;
 		addresses.push( did );
-		emit DIDAdded(did, _did.expires);
+		emit DIDAdded(did);
 		return true;
 	}
 
 	function revokeDID(address did) onlyOwner external returns (bool)  {
 		DIDStruct storage _did = dids[did];
-		require(_did.expires > 0, "DID not exists");
+		require(_did.entity, "DID not exists");
 		require(_did.status, "DID already revoked");
 
 		_did.status = false;
@@ -65,14 +60,13 @@ contract DNSRegistry is OwnableUpgradeSafe {
 
 	function enableDID(address did, uint validity) onlyOwner external returns (bool)  {
 		DIDStruct storage _did = dids[did];
-		require(_did.expires > 0, "DID not exists");
+		require(_did.entity, "DID not exists");
 
 		_did.status = true;
-		_did.expires = now + validity;
 
 		dids[did] = _did;
 
-		emit DIDEnabled(did, _did.expires);
+		emit DIDEnabled(did);
 		return true;
 	}
 
@@ -87,7 +81,6 @@ contract DNSRegistry is OwnableUpgradeSafe {
 
 		_did.status = false;
 		_did.entity = "";
-		_did.expires = 0;
 
 		dids[did] = _did;
 		delete addresses[index];

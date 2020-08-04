@@ -1,26 +1,55 @@
-import React  from "react";
-import { DatePicker, Form, Input, Modal } from "antd";
+import React, { useState } from "react";
+import { Button, Input, Modal, Upload } from "antd";
 import Eth from "ethjs-query";
 import EthContract from "ethjs-contract";
-import moment from "moment";
+import { UploadOutlined } from '@ant-design/icons';
 import config from "../../config";
+// import { getCertificateInfo, getPublicKey, verifyChain, getAddress } from "./utils";
 
-const DNSModal = ( {visible, hide, user} ) => {
+const { TextArea } = Input;
 
-  const [form] = Form.useForm();
+const DNSModal = ( { visible, hide, user } ) => {
 
-  const onOk = () => {
-    form.submit();
-  };
+  const [certificate, setCertificate] = useState({raw: 'asdasdasdasd'});
 
-  const onFinish = async ( data ) => {
+  const onOk = async () => {
     const eth = new Eth( window.ethereum );
-    const Contract = new EthContract(eth)(config.abi);
+    const Contract = new EthContract( eth )( config.abi );
 
-    const contract = Contract.at(process.env.REACT_APP_CONTRACT);
-    await contract.addDID( data.did, moment(data.expires).diff( moment(), 'seconds' ), data.entity,
+    const contract = Contract.at( process.env.REACT_APP_CONTRACT );
+    await contract.addDID( '0x00000000000000000000000000000000', 'asdasdasda',
       { from: user.account, gasLimit: 210000, gasPrice: 0 } );
     hide();
+  };
+
+  /* const validateCertificate = async( cert, root ) => {
+    const isValidChain = await verifyChain( cert, root );
+    const info = await getCertificateInfo( cert );
+    const publicKey = await getPublicKey( cert );
+    const address = getAddress( publicKey );
+
+    console.log( 'isValidChain:', isValidChain );
+    console.log( 'info:', info );
+    console.log( 'publicKey:', publicKey );
+    console.log( 'address:', address );
+  } */
+
+  const onSelectFile = async ( file ) => {
+    if( !file ){
+      return setCertificate( {
+        raw: ''
+      } );
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      setCertificate( {
+        raw: e.target.result
+      } );
+    }
+    reader.readAsText( file.file );
+     // const info = await getCertificateInfo( cert );
+     console.log( certificate );
+     return "";
   }
 
   return (
@@ -32,54 +61,29 @@ const DNSModal = ( {visible, hide, user} ) => {
       onCancel={() => hide()}
     >
       <div>
-        <Form form={form} onFinish={onFinish} layout="vertical">
-          <div className="row">
-            <div className="col-md-12">
-              <Form.Item
-                name="did"
-                label="Address of DID"
-                rules={[{ required: true, message: 'Please input the DID address' }]}
-              >
-                <Input
-                  size="default"
-                  placeholder="0x00000000000000000000000000000000"
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </div>
+        <div className="text-right">
+          <Upload onChange={file => onSelectFile( file)} beforeUpload={() => false}>
+            <Button className="btn btn-warning">
+              <UploadOutlined /> Select Certificate X.509 (PEM)
+            </Button>
+          </Upload>
+        </div>
+        <div className="row">
+          <div className="col-md-12">
+            <b style={{display: 'block', margin: '10px 0 5px 0'}}>DID:</b>
+            <Input
+              size="default"
+              placeholder="0x00000000000000000000000000000000"
+              style={{ width: '100%' }}
+            />
           </div>
-          <div className="row">
-            <div className="col-md-8">
-              <Form.Item
-                name="entity"
-                label="Entity"
-                rules={[{ required: true, message: 'Please specify the entity name' }]}
-              >
-                <Input
-                  size="default"
-                  placeholder="Name of the entity/organization"
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            </div>
-            <div className="col-md-4">
-              <Form.Item
-                name="expires"
-                label="Expiration"
-                rules={[{ required: true, message: 'Please select the expiration date' }, () => ({
-                  validator(rule, value) {
-                    if (moment().isBefore(value)) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('The selected date must be after today'));
-                  },
-                })]}
-              >
-                <DatePicker className="width-100p" />
-              </Form.Item>
-            </div>
+        </div>
+        <div className="row">
+          <div className="col-md-12">
+            <b style={{display: 'block', margin: '10px 0 5px 0'}}>Certificate Info:</b>
+            <TextArea rows={10} value={certificate.raw} />
           </div>
-        </Form>
+        </div>
       </div>
     </Modal>
   )
