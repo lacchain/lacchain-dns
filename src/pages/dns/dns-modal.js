@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { Button, Input, Modal, Upload } from "antd";
+import { Alert, Button, Card, Modal, Upload } from "antd";
 import Eth from "ethjs-query";
 import EthContract from "ethjs-contract";
 import { UploadOutlined } from '@ant-design/icons';
 import config from "../../config";
-// import { getCertificateInfo, getPublicKey, verifyChain, getAddress } from "./utils";
-
-const { TextArea } = Input;
+import { getIssuer, getSubject, getPublicKey, getAddress } from "./utils";
 
 const DNSModal = ( { visible, hide, user } ) => {
 
-  const [certificate, setCertificate] = useState({raw: 'asdasdasdasd'});
+  const [certificate, setCertificate] = useState(null);
 
   const onOk = async () => {
     const eth = new Eth( window.ethereum );
@@ -22,68 +20,91 @@ const DNSModal = ( { visible, hide, user } ) => {
     hide();
   };
 
-  /* const validateCertificate = async( cert, root ) => {
-    const isValidChain = await verifyChain( cert, root );
-    const info = await getCertificateInfo( cert );
-    const publicKey = await getPublicKey( cert );
-    const address = getAddress( publicKey );
-
-    console.log( 'isValidChain:', isValidChain );
-    console.log( 'info:', info );
-    console.log( 'publicKey:', publicKey );
-    console.log( 'address:', address );
-  } */
-
   const onSelectFile = async ( file ) => {
-    if( !file ){
-      return setCertificate( {
-        raw: ''
-      } );
+    console.log(file.file);
+    if( !(file.file instanceof File) ){
+      setCertificate( null );
+    } else {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const pem = e.target.result;
+        try {
+          const subject = getSubject( pem );
+          const issuer = getIssuer( pem );
+          const publicKey = getPublicKey( pem );
+          const address = getAddress( publicKey );
+          setCertificate( {
+            raw: pem,
+            subject,
+            issuer,
+            address
+          } );
+        } catch(error) {
+          setCertificate( { address: null } );
+        }
+      }
+      reader.readAsText( file.file );
     }
-    const reader = new FileReader();
-    reader.onload = e => {
-      setCertificate( {
-        raw: e.target.result
-      } );
-    }
-    reader.readAsText( file.file );
-     // const info = await getCertificateInfo( cert );
-     console.log( certificate );
-     return "";
   }
 
   return (
     <Modal
       title="Register New DID"
       width="600px"
+      okText="Register"
       visible={visible}
       onOk={onOk}
       onCancel={() => hide()}
     >
       <div>
-        <div className="text-right">
-          <Upload onChange={file => onSelectFile( file)} beforeUpload={() => false}>
+        <div className="text-center mb-2">
+          <Upload onChange={file => onSelectFile( file)} beforeUpload={() => false} showUploadList={false}>
             <Button className="btn btn-warning">
               <UploadOutlined /> Select Certificate X.509 (PEM)
             </Button>
           </Upload>
         </div>
-        <div className="row">
-          <div className="col-md-12">
-            <b style={{display: 'block', margin: '10px 0 5px 0'}}>DID:</b>
-            <Input
-              size="default"
-              placeholder="0x00000000000000000000000000000000"
-              style={{ width: '100%' }}
-            />
+        {certificate && !certificate.address &&
+        <Alert message="Selected certificate is not valid for LACChain DNS" type="error" />
+        }
+        {certificate && certificate.address &&
+        <>
+          <div className="row">
+            <div className="col-md-12">
+              <b>Ethereum Address:</b> {certificate.address}
+              <hr />
+            </div>
           </div>
-        </div>
-        <div className="row">
-          <div className="col-md-12">
-            <b style={{display: 'block', margin: '10px 0 5px 0'}}>Certificate Info:</b>
-            <TextArea rows={10} value={certificate.raw} />
+          <div className="row">
+            <div className="col-md-6">
+              <Card size="small" title="Subject">
+                {Object.keys(certificate.subject).map( key => (
+                  <div className="pl-2">
+                    <div><b>{key}:</b> {certificate.subject[key]}</div>
+                  </div>
+                ) )}
+              </Card>
+            </div>
+            <div className="col-md-6">
+              <Card size="small" title="Issuer">
+                {Object.keys(certificate.issuer).map( key => (
+                  <div className="pl-2">
+                    <div><b>{key}:</b> {certificate.issuer[key]}</div>
+                  </div>
+                ) )}
+              </Card>
+            </div>
           </div>
-        </div>
+          <div className="row">
+            <div className="col-md-12">
+              <b style={{display: 'block', margin: '10px 0 5px 0'}}>PEM:</b>
+              <pre>
+                {`${certificate.raw}`}
+              </pre>
+            </div>
+          </div>
+        </>
+        }
       </div>
     </Modal>
   )

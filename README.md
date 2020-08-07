@@ -1,6 +1,50 @@
-# LACChain DID Name Service
+# Introduction
 
-**Important:** The dependency chain for this implementation of onchain permissioning includes [web3js](https://github.com/ethereum/web3.js/) which is LGPL licensed.  
+LACChain DNS is a Decentralized Name Service that helps to maintain a registry of verified entities through a set of certificates issued by Certification Authorities (CA) associated with a DID (ethr). 
+Certificates that are used to register and validate the entity in an Ethereum-based smart contract called DNSRegistry.
+
+LACChain DNS also provides a Decentralized Application (DApp) to control the entities registered in the DNSRegistry (listing, registration and revocation). 
+As well as, a smart contract in solidity, which is based on the OpenZepellin standard for upgradeable contracts. 
+
+# DID Generation
+In order to register a DID in the DNS service, it must be generated from a valid X.509 certificate. The steps for the generation of the certificates are described in the section below.
+
+## Generate Certificates
+
+In order to validate the data of the entity to be registered in the DNS, it is necessary to have a valid X.509 certificate issued by a certifying entity (CA). Likewise, it is necessary to generate a request signing certificate (CSR) with the ethereum keys to send to IDEMIA and a certificate is generated under the hierarchy of said root CA.
+
+Optionally, an X.509 v3 certificate with post-quantum keys can be generated to add these keys as attributes in the CSR that will be sent to IDEMIA
+
+### 1. Ethereum-based Certificate Request (CSR)
+Ethereum keys are based on the secp256k1 elliptical curve algorithm. 
+It is possible to generate a Certificate Signing Request (CSR) using the key pair of an Ethereum account, 
+but for this it is necessary to specify the details using the Abstract Syntax Notation One (ASN1).
+
+```
+asn1 = SEQUENCE:seq_section
+ 
+[seq_section]
+version    = INTEGER:01
+privateKey = FORMAT:HEX,OCT:<ethereum private key hex>
+parameters = EXPLICIT:0,OID:secp256k1
+publicKey  = EXPLICIT:1,FORMAT:HEX,BITSTR:04<ethereum public key hex>
+```
+
+Finally, the CSR can be built with the following openssl commands with an intermediate step over a DER format key expressed in the ASN.1 file.
+
+```
+> openssl asn1parse -noout -genconf ethereum.asn1 -out eth_private_key.der 
+> openssl ec -inform DER -in eth_private_key.der -out eth_private_key.pem 
+> openssl req -new -key eth_private_key.pem -days 365 -out eth_certificate_request.csr
+```
+
+### 2. Post-Quantum Certificate
+
+## Sending to IDEMIA
+
+# DApp (Decentralized Application)
+
+**Important:** The dependency chain for this implementation of onchain permisioning includes [web3js](https://github.com/ethereum/web3.js/) which is LGPL licensed.  
 
 The LACChain DNS Registry has been deployed in the following addresses.
 
@@ -11,7 +55,7 @@ The LACChain DNS Registry has been deployed in the following addresses.
 | TestNet (id: 648539)                     |      0x1024d31846670b356f952F4c002E3758Ab9c4FFC        |
 
 
-## Development
+## Deployment
 Note: The build process for the Dapp is currently not supported on Windows.
 
 ### Initialise dependencies ###

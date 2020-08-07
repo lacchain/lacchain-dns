@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol";
 contract DNSRegistry is OwnableUpgradeSafe {
 
 	struct DIDStruct {
-		string entity;
+		string entity; // base64 x509 PEM
 		bool status;
 	}
 
@@ -17,25 +17,14 @@ contract DNSRegistry is OwnableUpgradeSafe {
 	mapping(address => DIDStruct) private dids;
 	address[] public addresses;
 
-	event DIDAdded(
-		address indexed did
-	);
-
-	event DIDRevoked(
-		address indexed did
-	);
-
-	event DIDRemoved(
-		address indexed did
-	);
-
-	event DIDEnabled(
-		address indexed did
-	);
+	event DIDAdded( address indexed did );
+	event DIDRevoked( address indexed did );
+	event DIDRemoved( address indexed did );
+	event DIDEnabled( address indexed did );
 
 	function addDID(address did, string calldata entity) onlyOwner external returns (bool) {
 		DIDStruct storage _did = dids[did];
-		require( !_did.entity, "DID already exists");
+		require( !_did.status, "DID already exists");
 		_did.entity = entity;
 		_did.status = true;
 
@@ -47,8 +36,7 @@ contract DNSRegistry is OwnableUpgradeSafe {
 
 	function revokeDID(address did) onlyOwner external returns (bool)  {
 		DIDStruct storage _did = dids[did];
-		require(_did.entity, "DID not exists");
-		require(_did.status, "DID already revoked");
+		require(_did.status, "DID is not enabled");
 
 		_did.status = false;
 
@@ -58,9 +46,9 @@ contract DNSRegistry is OwnableUpgradeSafe {
 		return true;
 	}
 
-	function enableDID(address did, uint validity) onlyOwner external returns (bool)  {
+	function enableDID(address did) onlyOwner external returns (bool)  {
 		DIDStruct storage _did = dids[did];
-		require(_did.entity, "DID not exists");
+		require(_did.status, "DID is not enabled");
 
 		_did.status = true;
 

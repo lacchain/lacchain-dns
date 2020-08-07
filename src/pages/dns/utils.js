@@ -1,40 +1,28 @@
-import pem from "pem";
+import { Certificate } from "@fidm/x509";
+import * as EthUtil from "ethereumjs-util";
 import Wallet from "ethereumjs-wallet";
 
-export function verifyChain( cert, root ) {
-  return new Promise( ( resolve, reject ) => {
-    pem.verifySigningChain( cert, root, ( err, result ) => {
-      if( err ) return reject( err );
-      resolve( result );
-    } );
-  } );
+export function getIssuer( pem ) {
+  const certificate = Certificate.fromPEM( Buffer.from( pem ) );
+  return certificate.issuer.attributes.reduce( ( d, a ) => ( { ...d, [a.name]: a.value } ), {} );
 }
 
-export function getPublicKey( cert ) {
-  return new Promise( ( resolve, reject ) => {
-    pem.getPublicKey( cert, ( err, result ) => {
-      if( err ) return reject( err );
-      const base64 = result.publicKey.replace( '-----BEGIN PUBLIC KEY-----\n', '' )
-        .replace( '-----END PUBLIC KEY-----', '' )
-        .replace( '\n', '' );
-      const hex = new Buffer( base64, 'base64' ).toString( 'hex' );
-      const publicKey = hex.slice( -128 );
-      resolve( `0x${publicKey}` );
-    } );
-  } );
+export function getSubject( pem ) {
+  const certificate = Certificate.fromPEM( Buffer.from( pem ) );
+  return certificate.subject.attributes.reduce( ( d, a ) => ( { ...d, [a.name]: a.value } ), {} );
+}
+
+export function getPublicKey( pem ) {
+  const certificate = Certificate.fromPEM( Buffer.from( pem ) );
+  return Buffer.from( certificate.publicKeyRaw ).toString( 'hex' ).slice( -128 );
 }
 
 export function getAddress( publicKey ) {
-  const publicKeyBuffer = EthUtil.toBuffer( publicKey );
-  const wallet = Wallet.default.fromPublicKey( publicKeyBuffer );
-  return `0x${wallet.getAddress().toString( 'hex' )}`;
-}
-
-export function getCertificateInfo( cert ) {
-  return new Promise( ( resolve, reject ) => {
-    pem.readCertificateInfo( cert, ( err, result ) => {
-      if( err ) return reject( err );
-      resolve( result );
-    } );
-  } );
+  try {
+    const publicKeyBuffer = EthUtil.toBuffer( `0x${publicKey}` );
+    const wallet = Wallet.fromPublicKey( publicKeyBuffer );
+    return `0x${wallet.getAddress().toString( 'hex' )}`;
+  } catch( e ) {
+    return null;
+  }
 }

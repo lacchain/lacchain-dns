@@ -1,11 +1,11 @@
 {
   "contracts": {
     "DNSRegistry": {
-      "address": "0x1Be01cBe5a96FBAc978B3f25C3eB5d541233Ab27",
-      "constructorCode": "608060405234801561001057600080fd5b50611231806100206000396000f3fe",
-      "bodyBytecodeHash": "7c5e83e5336956bbd211f2e54982dfa09dd8dbab3de30528ca94a7c7dfa8552b",
-      "localBytecodeHash": "875dcfe7c3761758af0f9b8b85f9295da969cc32d0df9346dc9d9ea507077634",
-      "deployedBytecodeHash": "875dcfe7c3761758af0f9b8b85f9295da969cc32d0df9346dc9d9ea507077634",
+      "address": "0x2be7f93E49425ccb1125Ec99311d7A6257B3D70d",
+      "constructorCode": "608060405234801561001057600080fd5b506110ca806100206000396000f3fe",
+      "bodyBytecodeHash": "e9e9afe12867a4e81d145629159fddeff2bd70143204ce05cd06e27d21e30fa8",
+      "localBytecodeHash": "e3727bd4251c0c6ef307df18dd39eef9d32dc5d732b84a99218cecfc83a01845",
+      "deployedBytecodeHash": "e3727bd4251c0c6ef307df18dd39eef9d32dc5d732b84a99218cecfc83a01845",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -48,16 +48,10 @@
               "src": "208:13:3"
             },
             {
-              "label": "expires",
-              "astId": 248,
-              "type": "t_uint256",
-              "src": "225:12:3"
-            },
-            {
               "label": "status",
-              "astId": 250,
+              "astId": 248,
               "type": "t_bool",
-              "src": "241:11:3"
+              "src": "244:11:3"
             }
           ]
         },
@@ -133,17 +127,17 @@
           "contract": "DNSRegistry",
           "path": "contracts/DNSRegistry.sol",
           "label": "dids",
-          "astId": 266,
+          "astId": 264,
           "type": "t_mapping<t_struct<DNSRegistry.DIDStruct>>",
-          "src": "346:42:3"
+          "src": "349:42:3"
         },
         {
           "contract": "DNSRegistry",
           "path": "contracts/DNSRegistry.sol",
           "label": "addresses",
-          "astId": 269,
+          "astId": 267,
           "type": "t_array:dyn<t_address>",
-          "src": "391:26:3"
+          "src": "394:26:3"
         }
       ],
       "warnings": {
@@ -151,7 +145,18 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "DNSRegistry",
+            "path": "contracts/DNSRegistry.sol",
+            "label": "dids",
+            "astId": 264,
+            "type": "t_mapping<t_struct<DNSRegistry.DIDStruct>>",
+            "src": "349:42:3"
+          }
+        ],
+        "storageDiff": []
       }
     }
   },
