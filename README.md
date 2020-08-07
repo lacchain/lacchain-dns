@@ -1,7 +1,7 @@
 # Introduction
 
 LACChain DNS is a Decentralized Name Service that helps to maintain a registry of verified entities through a set of certificates issued by Certification Authorities (CA) associated with a DID (ethr). 
-Certificates that are used to register and validate the entity in an Ethereum-based smart contract called DNSRegistry.
+Certificates will be used to register and validate the entity in an Ethereum Smart contract, which we called: **DNSRegistry**.
 
 LACChain DNS also provides a Decentralized Application (DApp) to control the entities registered in the DNSRegistry (listing, registration and revocation). 
 As well as, a smart contract in solidity, which is based on the OpenZepellin standard for upgradeable contracts. 
@@ -11,7 +11,7 @@ In order to register a DID in the DNS service, it must be generated from a valid
 
 ![DID Issuance](did_issuance.png?raw=true "DID Issuance Diagram")
 
-In the previous diagram you it is possible to see the process for the issuance of a DID through a certifying authority, 
+In the previous diagram it is possible to see the process for the issuance of a DID through a certifying authority, 
 making use of different X.509 certificates validated by a root CA. 
 The applicant must previously have a valid certificate (usually SSL), and a set of Ethereum keys in order to generate a Certificate Signing Request (CSR). 
 Optionally, you can add a Post-Quantum key pair in the certificate request. 
