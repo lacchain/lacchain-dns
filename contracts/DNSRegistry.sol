@@ -24,7 +24,7 @@ contract DNSRegistry is OwnableUpgradeSafe {
 
 	function addDID(address did, string calldata entity) onlyOwner external returns (bool) {
 		DIDStruct storage _did = dids[did];
-		require( !_did.status, "DID already exists");
+		//require( !_did.status, "DID already exists");
 		_did.entity = entity;
 		_did.status = true;
 

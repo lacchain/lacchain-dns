@@ -4,7 +4,7 @@ import Eth from "ethjs-query";
 import EthContract from "ethjs-contract";
 import { UploadOutlined } from '@ant-design/icons';
 import config from "../../config";
-import { getIssuer, getSubject, getPublicKey, getAddress } from "./utils";
+import { getIssuer, getSubject, getPublicKey, getAddress, parsePEM, getExtensions, checkSignature } from "./utils";
 
 const DNSModal = ( { visible, hide, user } ) => {
 
@@ -15,13 +15,13 @@ const DNSModal = ( { visible, hide, user } ) => {
     const Contract = new EthContract( eth )( config.abi );
 
     const contract = Contract.at( process.env.REACT_APP_CONTRACT );
-    await contract.addDID( '0x00000000000000000000000000000000', 'asdasdasda',
+    const result = await contract.addDID( certificate.address, certificate.raw,
       { from: user.account, gasLimit: 210000, gasPrice: 0 } );
+    console.log('Tx Receipt:', result);
     hide();
   };
 
   const onSelectFile = async ( file ) => {
-    console.log(file.file);
     if( !(file.file instanceof File) ){
       setCertificate( null );
     } else {
@@ -29,17 +29,23 @@ const DNSModal = ( { visible, hide, user } ) => {
       reader.onload = e => {
         const pem = e.target.result;
         try {
-          const subject = getSubject( pem );
-          const issuer = getIssuer( pem );
-          const publicKey = getPublicKey( pem );
+          const crt = parsePEM( pem );
+          const subject = getSubject( crt );
+          const issuer = getIssuer( crt );
+          const publicKey = getPublicKey( crt );
           const address = getAddress( publicKey );
+          const extensions = getExtensions( crt );
+          const validIssuer = checkSignature( crt, parsePEM( config.trustedCAs.idemia ) );
           setCertificate( {
             raw: pem,
             subject,
             issuer,
-            address
+            extensions,
+            address,
+            validIssuer
           } );
         } catch(error) {
+          console.log(error);
           setCertificate( { address: null } );
         }
       }
@@ -67,6 +73,9 @@ const DNSModal = ( { visible, hide, user } ) => {
         {certificate && !certificate.address &&
         <Alert message="Selected certificate is not valid for LACChain DNS" type="error" />
         }
+        {certificate && !certificate.validIssuer &&
+        <Alert message="Certificate was not issued by a valid Root CA" type="error" />
+        }
         {certificate && certificate.address &&
         <>
           <div className="row">
@@ -79,7 +88,7 @@ const DNSModal = ( { visible, hide, user } ) => {
             <div className="col-md-6">
               <Card size="small" title="Subject">
                 {Object.keys(certificate.subject).map( key => (
-                  <div className="pl-2">
+                  <div className="pl-2" key={key}>
                     <div><b>{key}:</b> {certificate.subject[key]}</div>
                   </div>
                 ) )}
@@ -88,7 +97,7 @@ const DNSModal = ( { visible, hide, user } ) => {
             <div className="col-md-6">
               <Card size="small" title="Issuer">
                 {Object.keys(certificate.issuer).map( key => (
-                  <div className="pl-2">
+                  <div className="pl-2" key={key}>
                     <div><b>{key}:</b> {certificate.issuer[key]}</div>
                   </div>
                 ) )}
@@ -97,10 +106,11 @@ const DNSModal = ( { visible, hide, user } ) => {
           </div>
           <div className="row">
             <div className="col-md-12">
-              <b style={{display: 'block', margin: '10px 0 5px 0'}}>PEM:</b>
-              <pre>
-                {`${certificate.raw}`}
-              </pre>
+              <Card size="small" title="Extensions">
+                <ul>
+                  {certificate.extensions.map( e => <li key={e.name}><b>{e.name}</b>: {e.value.match(/.{0,2}/g).join(':')}</li> )}
+                </ul>
+              </Card>
             </div>
           </div>
         </>
