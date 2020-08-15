@@ -4,7 +4,7 @@ import Eth from "ethjs-query";
 import EthContract from "ethjs-contract";
 import { UploadOutlined } from '@ant-design/icons';
 import config from "../../config";
-import { getIssuer, getSubject, getPublicKey, getAddress, parsePEM, getExtensions, checkSignature } from "./utils";
+import { getIssuer, getSubject, getAddress, parsePEM, getPublicKey, checkSignature } from "./utils";
 
 const DNSModal = ( { visible, hide, user } ) => {
 
@@ -15,9 +15,8 @@ const DNSModal = ( { visible, hide, user } ) => {
     const Contract = new EthContract( eth )( config.abi );
 
     const contract = Contract.at( process.env.REACT_APP_CONTRACT );
-    const result = await contract.addDID( certificate.address, certificate.raw,
+    await contract.addDID( certificate.address, certificate.raw,
       { from: user.account, gasLimit: 210000, gasPrice: 0 } );
-    console.log('Tx Receipt:', result);
     hide();
   };
 
@@ -32,15 +31,14 @@ const DNSModal = ( { visible, hide, user } ) => {
           const crt = parsePEM( pem );
           const subject = getSubject( crt );
           const issuer = getIssuer( crt );
+          const address = getAddress( crt );
           const publicKey = getPublicKey( crt );
-          const address = getAddress( publicKey );
-          const extensions = getExtensions( crt );
           const validIssuer = checkSignature( crt, parsePEM( config.trustedCAs.idemia ) );
           setCertificate( {
             raw: pem,
             subject,
             issuer,
-            extensions,
+            publicKey,
             address,
             validIssuer
           } );
@@ -104,12 +102,14 @@ const DNSModal = ( { visible, hide, user } ) => {
               </Card>
             </div>
           </div>
-          <div className="row">
+          <div className="row mt-3">
             <div className="col-md-12">
-              <Card size="small" title="Extensions">
-                <ul>
-                  {certificate.extensions.map( e => <li key={e.name}><b>{e.name}</b>: {e.value.match(/.{0,2}/g).join(':')}</li> )}
-                </ul>
+              <Card size="small" title={`Public Key ( ${certificate.publicKey.algo} )`}>
+                <div style={{maxHeight: '200px', overflow: 'auto' }}>
+                  <pre style={{whiteSpace: 'pre-wrap'}}>
+                    {certificate.publicKey.value.match(/.{0,2}/g).join(':')}
+                  </pre>
+                </div>
               </Card>
             </div>
           </div>
