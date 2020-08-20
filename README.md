@@ -46,9 +46,35 @@ Finally, the CSR can be built with the following openssl commands with an interm
 > openssl req -new -key eth_private_key.pem -days 365 -out eth_certificate_request.csr
 ```
 
-### 2. Post-Quantum Certificate
+There is also an alternative way using docker-compose. To generate the ethereum CSR, you need to edit the ``PRIVATE_KEY`` and ``PUBLIC_KEY`` variables in the docker-compose.yml,
+once you have settled that variables, just execute the following commands:
 
-## Sending to IDEMIA
+```shell
+$ cd ./generator
+$ docker-compose run ethereum
+```
+
+
+**Note:** Don't forget to change the ``SUBJECT`` environment variable in the docker-compose.yml file. This variable will be passed to the openssl command, refer to [E24191](https://docs.oracle.com/cd/E24191_01/common/tutorials/authz_cert_attributes.html) to see the subject format and fields.
+
+### 2. Post-Quantum CSR
+
+In order to generate the Post-Quantum certificate it is necessary to have the openssl custom library installed. 
+However there is a dockerfile available in the /generator directory, which have the container with the custom openssl
+to generate post-quantum certificates.
+
+To deploy the docker container, you need to execute the following commands:
+
+```shell
+$ cd ./generator
+$ docker-compose run quantum
+```
+
+The previous command will generate a new post-quantum CSR (using Dilithium2 algorithm) in the /out directory, with their respective private key.  
+
+## 3. Generating Certificates and DID
+
+
 
 # DApp (Decentralized Application)
 
