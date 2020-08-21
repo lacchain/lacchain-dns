@@ -50,7 +50,7 @@ There is also an alternative way using docker-compose. To generate the ethereum 
 once you have settled that variables, just execute the following commands:
 
 ```shell
-$ cd ./generator
+$ cd ./docker
 $ docker-compose run ethereum
 ```
 
@@ -65,7 +65,7 @@ to generate post-quantum certificates.
 To deploy the docker container, you need to execute the following commands:
 
 ```shell
-$ cd ./generator
+$ cd ./docker
 $ docker-compose run quantum
 ```
 
@@ -86,6 +86,7 @@ The process to generate the certificate, and the corresponding DID, is as follow
 The process described above can be performed with the following docker-compose command:
 
 ```bash
+$ cd ./docker
 $ docker-compose run generator
 $ docker-compose run did
 ```
