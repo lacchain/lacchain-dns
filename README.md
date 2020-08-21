@@ -9,7 +9,7 @@ As well as, a smart contract in solidity, which is based on the OpenZepellin sta
 # DID Issuance
 In order to register a DID in the DNS service, it must be generated from a valid X.509 certificate. The steps for the generation of the certificates are described in the section below.
 
-![DID Issuance](did_issuance.png?raw=true "DID Issuance Diagram")
+![DID Issuance](did_issuance.png?raw=true "DID Issuance Diagram") 
 
 In the previous diagram it is possible to see the process for the issuance of a DID through a certifying authority, 
 making use of different X.509 certificates validated by a root CA. 
@@ -54,7 +54,6 @@ $ cd ./generator
 $ docker-compose run ethereum
 ```
 
-
 **Note:** Don't forget to change the ``SUBJECT`` environment variable in the docker-compose.yml file. This variable will be passed to the openssl command, refer to [E24191](https://docs.oracle.com/cd/E24191_01/common/tutorials/authz_cert_attributes.html) to see the subject format and fields.
 
 ### 2. Post-Quantum CSR
@@ -70,11 +69,39 @@ $ cd ./generator
 $ docker-compose run quantum
 ```
 
+**Note:** Don't forget to change the ``SUBJECT`` environment variable in the docker-compose.yml file. This variable will be passed to the openssl command, refer to [E24191](https://docs.oracle.com/cd/E24191_01/common/tutorials/authz_cert_attributes.html) to see the subject format and fields.
+
 The previous command will generate a new post-quantum CSR (using Dilithium2 algorithm) in the /out directory, with their respective private key.  
 
-## 3. Generating Certificates and DID
+## 3. Generating Certificate and DID
 
+The process to generate the certificate, and the corresponding DID, is as follows:
+1. The CA (in this case IDEMIA) verifies the subject of Applicant Certificate, Ethereum CSR and Post-Quantum CSR to be equal.
+2. Generate Certificate with Applicant Certificate subject, Post-Quantum Public Key and Ethereum Public Key as x.509 v3 attribute.
+3. Generate a DID with a temporary Ethereum KeyPair
+4. Add the Post-Quantum Public Key to the DID
+5. Change the owner of the DID to Ethereum address from Ethereum CSR
+6. Delete temporary Ethereum KeyPair
 
+The process described above can be performed with the following docker-compose command:
+
+```bash
+$ docker-compose run generator
+$ docker-compose run did
+```
+
+Before to execute the **```did```** docker command, you must edit the environment variables in the docker-compose.yml file.
+
+- ETHR_REGISTRY: "<EthrRegistry Contract Address>"
+- WEB3_RPC: <Ethereum RPC http url>
+- CERTIFICATE: <Certificate File Name>
+- NETWORK_ID: <Ethereum Network ID>
+
+Finally, make sure that you mount the certificate (crt) file in the volumes section.
+``` 
+volumes:
+  - ./out/certificate.crt:/app/<Certificate File Name>
+```
 
 # DApp (Decentralized Application)
 
