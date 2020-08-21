@@ -9,7 +9,7 @@ import EthContract from "ethjs-contract";
 import ethers from "ethers";
 import DNSModal from "./dns-modal";
 import config from "../../config";
-import { getAddress, getDates, getExtensions, getIssuer, getPublicKey, getSubject, parsePEM } from "./utils";
+import { getAddress, getDates, getPublicKey, getIssuer, getSubject, parsePEM } from "./utils";
 import DetailsModal from "./details-modal";
 
 const { confirm } = Modal
@@ -77,10 +77,9 @@ class DNS extends React.Component {
         const crt = parsePEM( pem );
         const subject = getSubject( crt );
         const issuer = getIssuer( crt );
-        const publicKey = getPublicKey( crt );
         const dates = getDates( crt );
-        const address = getAddress( publicKey );
-        const extensions = getExtensions( crt );
+        const address = getAddress( crt );
+        const publicKey = getPublicKey( crt );
         return {
           did: `did:ethr:lacchain:${address}`,
           key: address,
@@ -88,7 +87,6 @@ class DNS extends React.Component {
           subject,
           issuer,
           validity: dates,
-          extensions,
           publicKey
         }
       } catch( e ) {
@@ -97,9 +95,8 @@ class DNS extends React.Component {
           key: '-1',
           subject: 'unknown',
           issuer: 'unknown',
-          extensions: [],
-          validity: { from: 0, to: 0 },
-          publicKey: 'unknown'
+          publicKey: '',
+          validity: { from: 0, to: 0 }
         }
       }
     } );
