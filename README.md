@@ -93,10 +93,12 @@ $ docker-compose run did
 
 Before to execute the **```did```** docker command, you must edit the environment variables in the docker-compose.yml file.
 
+```
 - ETHR_REGISTRY: "<EthrRegistry Contract Address>"
 - WEB3_RPC: <Ethereum RPC http url>
 - CERTIFICATE: <Certificate File Name>
 - NETWORK_ID: <Ethereum Network ID>
+```
 
 Finally, make sure that you mount the certificate (crt) file in the volumes section.
 ``` 
