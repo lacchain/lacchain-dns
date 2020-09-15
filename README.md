@@ -14,9 +14,9 @@ The LACChain DNS Registry has been deployed in the following addresses.
 
 | Network                                  | Address                                                |
 | -----------------------------------------| ------------------------------------------------------ |
-| MainNet (id: 648529)                     |      Pending to deploy...                              |
+| Pro TestNet (id: 648529)                 |      0x87570d1Be0174a214465E27D70647a564CaB595c        |
+| MultiLedgers (id: 648539)                |      0x1024d31846670b356f952F4c002E3758Ab9c4FFC        |
 | David19 (id: 648530)                     |      Pending to deploy...                              |
-| TestNet (id: 648539)                     |      0x1024d31846670b356f952F4c002E3758Ab9c4FFC        |
 
 
 ## Deployment
