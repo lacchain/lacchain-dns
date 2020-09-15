@@ -1,0 +1,176 @@
+{
+  "contracts": {
+    "DNSRegistry": {
+      "address": "0xe8CE0dB522D6139C807d022B4039845258F7193A",
+      "constructorCode": "608060405234801561001057600080fd5b50611079806100206000396000f3fe",
+      "bodyBytecodeHash": "ab30f0495d7c1a8c072941f89a94aba13b889ec374fc8056d162680644b3da6d",
+      "localBytecodeHash": "509dda82714cfa7b892cd980d988965258b2cc219849374c125f99e03d77ee29",
+      "deployedBytecodeHash": "509dda82714cfa7b892cd980d988965258b2cc219849374c125f99e03d77ee29",
+      "types": {
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        },
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_array:49<t_uint256>": {
+          "id": "t_array:49<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "49",
+          "kind": "array",
+          "label": "uint256[49]"
+        },
+        "t_struct<DNSRegistry.DIDStruct>": {
+          "id": "t_struct<DNSRegistry.DIDStruct>",
+          "kind": "struct",
+          "label": "DNSRegistry.DIDStruct",
+          "members": [
+            {
+              "label": "entity",
+              "astId": 246,
+              "type": "t_string",
+              "src": "208:13:3"
+            },
+            {
+              "label": "status",
+              "astId": 248,
+              "type": "t_bool",
+              "src": "244:11:3"
+            }
+          ]
+        },
+        "t_string": {
+          "id": "t_string",
+          "kind": "elementary",
+          "label": "string"
+        },
+        "t_mapping<t_struct<DNSRegistry.DIDStruct>>": {
+          "id": "t_mapping<t_struct<DNSRegistry.DIDStruct>>",
+          "valueType": "t_struct<DNSRegistry.DIDStruct>",
+          "label": "mapping(key => DNSRegistry.DIDStruct)",
+          "kind": "mapping"
+        },
+        "t_array:dyn<t_address>": {
+          "id": "t_array:dyn<t_address>",
+          "valueType": "t_address",
+          "length": "dyn",
+          "kind": "array",
+          "label": "address[]"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Initializable",
+          "path": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol",
+          "label": "initialized",
+          "astId": 48,
+          "type": "t_bool",
+          "src": "757:24:1"
+        },
+        {
+          "contract": "Initializable",
+          "path": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol",
+          "label": "initializing",
+          "astId": 50,
+          "type": "t_bool",
+          "src": "876:25:1"
+        },
+        {
+          "contract": "Initializable",
+          "path": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol",
+          "label": "______gap",
+          "astId": 113,
+          "type": "t_array:50<t_uint256>",
+          "src": "1982:29:1"
+        },
+        {
+          "contract": "ContextUpgradeSafe",
+          "path": "@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol",
+          "label": "__gap",
+          "astId": 43,
+          "type": "t_array:50<t_uint256>",
+          "src": "1277:25:0"
+        },
+        {
+          "contract": "OwnableUpgradeSafe",
+          "path": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol",
+          "label": "_owner",
+          "astId": 124,
+          "type": "t_address",
+          "src": "651:22:2"
+        },
+        {
+          "contract": "OwnableUpgradeSafe",
+          "path": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol",
+          "label": "__gap",
+          "astId": 237,
+          "type": "t_array:49<t_uint256>",
+          "src": "2434:25:2"
+        },
+        {
+          "contract": "DNSRegistry",
+          "path": "contracts/DNSRegistry.sol",
+          "label": "dids",
+          "astId": 264,
+          "type": "t_mapping<t_struct<DNSRegistry.DIDStruct>>",
+          "src": "349:42:3"
+        },
+        {
+          "contract": "DNSRegistry",
+          "path": "contracts/DNSRegistry.sol",
+          "label": "addresses",
+          "astId": 267,
+          "type": "t_array:dyn<t_address>",
+          "src": "394:26:3"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    }
+  },
+  "solidityLibs": {},
+  "proxies": {
+    "did-repository/DNSRegistry": [
+      {
+        "address": "0x87570d1Be0174a214465E27D70647a564CaB595c",
+        "version": "1.0.0",
+        "implementation": "0xe8CE0dB522D6139C807d022B4039845258F7193A",
+        "admin": "0x17d180fC4aB324B1E18599f627AC2FC92ae20F6f",
+        "kind": "Upgradeable"
+      }
+    ]
+  },
+  "manifestVersion": "2.2",
+  "dependencies": {
+    "@openzeppelin/contracts-ethereum-package": {
+      "package": "0xa1774eab230cC4881a89Ae2bE3760Bc82B67f86C",
+      "version": "3.0.0",
+      "customDeploy": true
+    }
+  },
+  "version": "1.0.0",
+  "proxyAdmin": {
+    "address": "0x17d180fC4aB324B1E18599f627AC2FC92ae20F6f"
+  }
+}
